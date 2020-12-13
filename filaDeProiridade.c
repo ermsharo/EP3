@@ -5,7 +5,7 @@
 /**                                                                 **/
 /**   EP3 - Fila de Prioridade (utilizando heap)                    **/
 /**                                                                 **/
-/**   <nome do(a) aluno(a)>                   <numero USP>          **/
+/**   <Emilio Haro>                   <10816857>                    **/
 /**                                                                 **/
 /*********************************************************************/
 
@@ -38,9 +38,15 @@ void exibirLog(PFILA f){
 
 int tamanho(PFILA f){
   int tam = 0;
-  
   /* COMPLETAR */
   
+
+  while(f->heap[tam] != NULL){
+    tam++;
+  }
+
+  printf(" \n \n Tamanho eh (%i)",tam);
+
   return tam;
 }
 
@@ -79,7 +85,24 @@ PONT removerElemento(PFILA f){
 bool consultarPrioridade(PFILA f, int id, float* resposta){
   bool res = false;
   
-  /* COMPLETAR */
+  /* COMPLETAR  */
   
   return res;
+}
+
+
+int main(){
+
+  printf("EP3 \n \n ");
+  //Pega os casos de teste gerais depois
+
+  //Criando a referencia para a nossa fila 
+
+  PFILA  fila = malloc(sizeof(FILADEPRIORIDADE)); 
+  fila = criarFila(15);
+  exibirLog(fila);
+tamanho(fila);
+
+
+  return 0; 
 }
