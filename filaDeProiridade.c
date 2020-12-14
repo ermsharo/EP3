@@ -58,58 +58,52 @@ int tamanho(PFILA f)
 bool inserirElemento(PFILA f, int id, float prioridade)
 {
 
-
   bool res = false;
 
   /* COMPLETAR */
   float resp;
 
   //Verificando se o elemento é valido
-  if(consultarPrioridade(f, id, &resp) == true){
+  if (consultarPrioridade(f, id, &resp) == true)
+  {
     //printf("Aqui esta");
-  }else{
+  }
+  else
+  {
     //printf("Aqui esta");
   }
 
-  if (id < 0 || id >= f->maxElementos || consultarPrioridade(f, id, &resp))   return res;
+  if (id < 0 || id >= f->maxElementos || consultarPrioridade(f, id, &resp))  return res;
 
-
-
-printf(" \n Inserindo elemento");
+  printf(" \n Inserindo elemento");
   PONT elemento = (PONT)malloc(sizeof(ELEMENTO));
   elemento->id = id;
   elemento->prioridade = prioridade;
   f->arranjo[id] = elemento;
 
-
   int i;
 
   //Adicionando elemento ao nosso heap
 
-  for (i = 0 ; i < f->maxElementos; i++){
+  for (i = 0; i < f->maxElementos; i++)
+  {
     printf("Trash");
     //HeapVazio
 
-    if (f->heap[i] == NULL){
+    if (f->heap[i] == NULL)
+    {
       elemento->posicao = 0;
       f->heap[i] = elemento;
       //Atualiazando tamanho do heap
       f->elementosNoHeap = f->elementosNoHeap + 1;
       i = f->maxElementos;
       printf("HEAP VAZIO");
-    }
-
-    //Elemento é o primeiro da fila não vazia
-    else if (elemento->prioridade > f->heap[0]->prioridade)
-    {
+    } else if (elemento->prioridade > f->heap[0]->prioridade){
       int j = f->maxElementos - 1;
       while (j >= 0)
       {
-        if (f->heap[j] != NULL)
-        {
-          f->heap[j + 1] = f->heap[j];
-          f->heap[j + 1]->posicao++;
-        }
+        if (f->heap[j] != NULL) { f->heap[j + 1] = f->heap[j];  f->heap[j + 1]->posicao++;}
+
         j--;
       }
       elemento->posicao = 0;
@@ -119,9 +113,17 @@ printf(" \n Inserindo elemento");
       i = f->maxElementos;
     }
 
-    //Caso elemento esteja no fim da fila
+        //Caso o elemento pertenca ao final da fila
+        else if (f->heap[i + 1] == NULL)
+        {
+            elemento->posicao = f->heap[i]->posicao + 1;
 
-    else if (f->heap[i]->prioridade > elemento->prioridade && f->heap[i + 1]->prioridade < elemento->prioridade)
+            f->heap[i + 1] = elemento;
+            f->elementosNoHeap = f->elementosNoHeap + 1;
+            i = f->maxElementos;
+        }
+
+    else if ((f->heap[i]->prioridade > elemento->prioridade) && (f->heap[i + 1]->prioridade < elemento->prioridade))
     {
       int j = f->maxElementos - 1;
       while (j > i)
@@ -149,10 +151,74 @@ bool aumentarPrioridade(PFILA f, int id, float novaPrioridade)
 {
   bool res = false;
 
+  float resposta;
 
+  if (id < 0 || id >= f->maxElementos || !consultarPrioridade(f, id, &resposta))
+    return res;
 
+  //Procurar qual é o elemento dentro do heap
+  //Transformar esta função em metodo depois
 
-  /* COMPLETAR */
+  int pos;
+  int i;
+  //Ver se não altera colocar a declaração do i dentro do laço
+
+  //Aqui esta verificando  a existencia de uma prioridade, seria bom criar uma função pura  só para isso
+  for (i = 0; i < f->maxElementos; i++)
+  {
+    if (f->heap[i]->id == id)
+    {
+
+      if (f->heap[i]->prioridade >= novaPrioridade)
+        return res;
+      pos = i;
+      i = f->maxElementos;
+    }
+  }
+
+  //Mudando a prioridade
+
+  //Criar um metodo para isso tambem ???
+  f->heap[pos]->prioridade = novaPrioridade;
+
+  PONT pontElemento;
+  pontElemento = f->heap[pos];
+
+  i = pos;
+  bool aux = false;
+
+  //Refatorar
+
+  //
+  if (i > 0)
+  {
+    while (!aux)
+    {
+
+      if (f->heap[i + 1])
+      {
+        if ((f->heap[i - 1]->prioridade >= f->heap[i]->prioridade) && (f->heap[i + 1]->prioridade <= f->heap[i]->prioridade))
+          aux = true;
+      }
+      else
+      {
+        if (f->heap[i - 1]->prioridade > f->heap[i]->prioridade)
+          aux = true;
+      }
+      if (!aux)
+      {
+        f->heap[i] = f->heap[i - 1];
+        f->heap[i - 1] = pontElemento;
+        f->heap[i]->posicao++;
+        f->heap[i - 1]->posicao--;
+      }
+      i--;
+      if (i == 0)
+        aux = true;
+    }
+  }
+
+  res = true;
 
   return res;
 }
@@ -163,6 +229,67 @@ bool reduzirPrioridade(PFILA f, int id, float novaPrioridade)
 
   /* COMPLETAR */
 
+  float resposta;
+
+  //Verificar se o elemento é valido //REFATORAR !!!
+  if (id < 0 || id >= f->maxElementos || !consultarPrioridade(f, id, &resposta))
+    return res;
+
+  int i;
+  int pos;
+  for (i = 0; i < f->maxElementos; i++)
+  {
+    if (f->heap[i]->id == id)
+    {
+
+      if (f->heap[i]->prioridade <= novaPrioridade)
+        return res;
+
+      pos = i;
+      i = f->maxElementos;
+    }
+  }
+
+  //Mudando a prioriadade
+
+  f->heap[pos]->prioridade = novaPrioridade;
+
+  PONT elem;
+  elem = f->heap[pos];
+
+  i = pos;
+  bool aux = false;
+
+  if (i < f->maxElementos - 1)
+  {
+    while (!aux)
+    {
+      if (f->heap[i]->posicao > 0)
+      {
+        if ((f->heap[i - 1]->prioridade >= f->heap[i]->prioridade) && (f->heap[i + 1]->prioridade <= f->heap[i]->prioridade))
+          aux = true;
+      }
+      else
+      {
+        if (f->heap[i + 1]->prioridade < f->heap[i]->prioridade)
+          aux = true;
+      }
+      if (!aux)
+      {
+        f->heap[i] = f->heap[i + 1];
+        f->heap[i + 1] = elem;
+
+        f->heap[i]->posicao--;
+        f->heap[i + 1]->posicao++;
+      }
+
+      i++;
+      if (i == f->elementosNoHeap - 1)
+        aux = true;
+    }
+  }
+
+  res = true;
   return res;
 }
 
@@ -181,23 +308,26 @@ bool consultarPrioridade(PFILA f, int id, float *resposta)
 
   /* COMPLETAR  */
 
-   //Verifica se o elemento eh valido, caso nao for retorna false
-    if (id < 0 || id >= f->maxElementos){
-        return res;}
-
-    //Verifica se existe um elemento na fila com esse id
-    PONT elemento = f->arranjo[id];
-    if (elemento == NULL) {return res;}
-
-
-printf("FOI AQUI");
-
-    *resposta = elemento->prioridade;
-
-    res = true;
-
+  //Verifica se o elemento eh valido, caso nao for retorna false
+  if (id < 0 || id >= f->maxElementos)
+  {
     return res;
+  }
 
+  //Verifica se existe um elemento na fila com esse id
+  PONT elemento = f->arranjo[id];
+  if (elemento == NULL)
+  {
+    return res;
+  }
+
+  printf("FOI AQUI");
+
+  *resposta = elemento->prioridade;
+
+  res = true;
+
+  return res;
 }
 
 int main()
@@ -212,16 +342,18 @@ int main()
   fila = criarFila(15);
   exibirLog(fila);
   tamanho(fila);
-  inserirElemento(fila, 0, 10);
-  inserirElemento(fila, 1, 10);
-  inserirElemento(fila, 2, 10);
-  inserirElemento(fila, 3, 10);
-  inserirElemento(fila, 4, 10);
-  inserirElemento(fila, 5, 10);
-  inserirElemento(fila, 6, 10);
-  inserirElemento(fila, 7, 10);
-  inserirElemento(fila, 8, 10);
-  inserirElemento(fila, 9, 10);
+
+    inserirElemento(fila, 0, 1);
+    inserirElemento(fila, 1, 2);
+    inserirElemento(fila, 2, 3);
+    inserirElemento(fila, 3, 4);
+    inserirElemento(fila, 4, 10);
+    inserirElemento(fila, 5, 8);
+    inserirElemento(fila, 6, 5);
+    inserirElemento(fila, 7, 10);
+    inserirElemento(fila, 8, 2);
+    inserirElemento(fila, 9, 8);
+
   exibirLog(fila);
   tamanho(fila);
 
