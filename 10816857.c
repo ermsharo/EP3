@@ -11,6 +11,21 @@
 
 #include "filaDePrioridade.h"
 
+/* static bool verificaELemento(int id, PFILA f , *float vf)
+{
+
+  bool resp = 0;
+
+  float resposta;
+
+  if (id < 0 || id >= f->maxElementos || !consultarPrioridade(f, id, &vf))
+    return resp;
+
+  resp = true;
+
+  return resp;
+}*/
+
 PFILA criarFila(int max)
 {
   PFILA res = (PFILA)malloc(sizeof(FILADEPRIORIDADE));
@@ -26,6 +41,8 @@ PFILA criarFila(int max)
   res->elementosNoHeap = 0;
   return res;
 }
+
+
 
 void exibirLog(PFILA f)
 {
@@ -49,8 +66,6 @@ int tamanho(PFILA f)
   {
     tam++;
   }
-
- // printf(" \n \n Tamanho eh (%i)", tam);
 
   return tam;
 }
@@ -217,12 +232,11 @@ bool reduzirPrioridade(PFILA f, int id, float novaPrioridade)
 
   float resposta;
 
-  if (id < 0 || id >= f->maxElementos || !consultarPrioridade(f, id, &resposta))
-    return res;
+if(id < 0 || id >= f->maxElementos -1 || !consultarPrioridade(f, id, &resposta)) return res;
 
   int i;
   int pos;
-  for (i = 0; i < f->maxElementos; i++)
+  for (i = 0; i <= f->maxElementos; i++)
   {
     if (f->heap[i]->id == id)
     {
@@ -243,7 +257,7 @@ bool reduzirPrioridade(PFILA f, int id, float novaPrioridade)
   i = pos;
   bool aux = false;
 
-  if (i < f->maxElementos - 1)
+  if (i <= f->maxElementos - 1)
   {
     while (!aux)
     {
@@ -254,7 +268,7 @@ bool reduzirPrioridade(PFILA f, int id, float novaPrioridade)
       }
       else
       {
-        if (f->heap[i + 1]->prioridade < f->heap[i]->prioridade)
+        if (f->heap[i + 1]->prioridade <= f->heap[i]->prioridade)
           aux = true;
       }
       if (!aux)
@@ -338,34 +352,17 @@ PONT removerElemento(PFILA f)
   return res;
 }
 
-bool ValidaElemento(int id, PFILA f)
-{
 
-  bool resp = false;
-
-  float resposta;
-
-  if (id < 0 || id >= f->maxElementos || !consultarPrioridade(f, id, &resposta))
-    return resp;
-
-  resp = true;
-
-  return resp;
-}
 
 bool consultarPrioridade(PFILA f, int id, float *resposta)
 {
   bool res = false;
 
-  /* COMPLETAR  */
-
-  //Verifica se o elemento eh valido, caso nao for retorna false
   if (id < 0 || id >= f->maxElementos - 1)
   {
     return res;
   }
 
-  //Verifica se existe um elemento na fila com esse id
   PONT elemento = f->arranjo[id];
   if (elemento == NULL)
   {
@@ -379,3 +376,4 @@ bool consultarPrioridade(PFILA f, int id, float *resposta)
 
   return res;
 }
+
