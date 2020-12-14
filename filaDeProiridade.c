@@ -87,8 +87,8 @@ bool inserirElemento(PFILA f, int id, float prioridade)
 
   for (i = 0; i < f->maxElementos; i++)
   {
-    printf("Trash");
-    //HeapVazio
+    //printf("Trash");
+
 
     if (f->heap[i] == NULL)
     {
@@ -250,6 +250,9 @@ bool reduzirPrioridade(PFILA f, int id, float novaPrioridade)
     }
   }
 
+
+
+
   //Mudando a prioriadade
 
   f->heap[pos]->prioridade = novaPrioridade;
@@ -293,13 +296,65 @@ bool reduzirPrioridade(PFILA f, int id, float novaPrioridade)
   return res;
 }
 
+
+
+bool Reordenar(PFILA f,PONT ref){
+
+  bool resultado = true; 
+  
+  if(ref == NULL) return resultado;
+
+
+  int esq = (2 * ref->posicao) + 1; int dir = (2 * ref->posicao)+ 2 ; 
+  if(dir >= f->elementosNoHeap) return resultado;  
+  if(esq >= f->elementosNoHeap) return resultado;  
+
+  int big = esq; 
+  if(dir >= 2){
+    if(f->heap[esq]->prioridade < f->heap[dir]->prioridade){
+      big = dir; 
+    }
+  }
+
+  if(ref-> prioridade < f->heap[big]->prioridade){
+    PONT aux = f->heap[big]; 
+    int posAux = ref->posicao;
+
+    f->heap[big] = ref; 
+    ref->posicao = big; 
+
+    f->heap[posAux] = aux;
+    aux->posicao = posAux; 
+
+    Reordenar(f,ref);
+  }
+
+
+}
+
 PONT removerElemento(PFILA f)
 {
   PONT res = NULL;
 
   /* COMPLETAR */
+  
 
-  return res;
+  if(f->elementosNoHeap == 0) return res; 
+
+      res = f->heap[0]; 
+      f->heap[0] = f->heap[f->elementosNoHeap -1]; 
+      f->heap[0]->posicao = 0; 
+
+      f->heap[f->elementosNoHeap -1] = NULL;
+      (f->elementosNoHeap = f->elementosNoHeap -1); 
+      f->arranjo[res->id] = NULL;
+  
+      PONT ref = f->heap[0];  
+      
+      Reordenar(f,ref);
+
+      return res; 
+
 }
 
 bool consultarPrioridade(PFILA f, int id, float *resposta)
@@ -347,15 +402,27 @@ int main()
     inserirElemento(fila, 1, 2);
     inserirElemento(fila, 2, 3);
     inserirElemento(fila, 3, 4);
-    inserirElemento(fila, 4, 10);
+
     inserirElemento(fila, 5, 8);
     inserirElemento(fila, 6, 5);
     inserirElemento(fila, 7, 10);
     inserirElemento(fila, 8, 2);
     inserirElemento(fila, 9, 8);
 
+    reduzirPrioridade(fila,2,0);
+    aumentarPrioridade(fila,5,99);
+
+    
+
   exibirLog(fila);
   tamanho(fila);
+
+  removerElemento(fila);
+
+  exibirLog(fila);
+  tamanho(fila);
+
+  
 
   return 0;
 }
